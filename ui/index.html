@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <link href="CSS/style.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="css/next.css">
+    <link rel="stylesheet" href="css/bootstrap/css/bootstrap.min.css">
+
+</head>
+<body id="body">
+
+<header>
+    <div class="logo">
+        <img src="CSS/white.png" alt="Cisco Cloud">
+    </div>
+</header>
+<br/>
+
+<div class="sidebar col-md-3">
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <a class="menuitem" href="host">Host (<span id="hostCount"><div class="loader"></div></span>)</a>
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Inventory</h3>
+        </div>
+        <div class="panel-body">
+            <ul>
+                <li><a class="menuitem" href="network-device">Network Device (<span id="networkDeviceCount"><div
+                        class="loader"></div></span>)</a></li>
+                <li><a class="menuitem" href="link">Link (<span id="linkCount"><div class="loader"></div></span>)</a>
+                </li>
+                <li><a class="menuitem" href="location">Location (<span id="locationCount"><div
+                        class="loader"></div></span>)</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Policy</h3>
+        </div>
+        <div class="panel-body">
+            <ul class="">
+                <li><a class="menuitem" href="application">Application (<span id="applicationCount"><div
+                        class="loader"></div></span>)</a></li>
+                <li><a class="menuitem" href="category">Category (<span id="categoryCount"><div
+                        class="loader"></div></span>)</a></li>
+                <li><a class="menuitem" href="policy">Policy (<span id="policyCount"><div class="loader"></div></span>)</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+
+</div>
+<div class="col-md-9">
+
+    <ul class="nav nav-tabs nav-justified">
+        <li class="active"><a data-toggle="tab" href="#host">Network Host</a></li>
+        <li><a data-toggle="tab" href="#topology">Topology</a></li>
+    </ul>
+
+    <div class="tab-content">
+        <div id="host" class="tab-pane fade in active">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+
+                    <!--Source : <span id="source" style="color:red"></span>  Destination: <span style="color: green;" id="destination"></span>-->
+                    <!--Bad way of doing DOM manipulation -->
+    <span style="color:green">
+    <span id="baseUrl"></span>
+    routing-path/
+    <span id="source">?</span>/
+    <span id="destination">?</span>
+    </span>
+
+                    <button onclick="getTopology()" class="btn btn-primary">Get Topology</button>
+                    <button onclick="clearRoutingParams()" class="btn btn-danger">Clear</button>
+
+                </div>
+                <div class="panel-body">
+                    <div class="content ">
+                        <a class="back" id="backUrl" href="">&lt; Back</a>
+
+                        <div class="">
+                            <table id="table1" border="1" class="table table-responsive table-striped">
+                                <thead></thead>
+                                <tbody></tbody>
+                                <tfoot></tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="topology" class="tab-pane fade">
+            <div id="topo-container"></div>
+        </div>
+    </div>
+
+
+</div>
+
+
+<!--jquery plugins-->
+<script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+<script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+<script src="css/bootstrap/js/bootstrap.js"></script>
+<script src="scripts/underscore-min.js"></script>
+<script src="js/next.js"></script>
+<script src="scripts/app.js"></script>
+<script src="scripts/parseJson.js"></script>
+
+<script>
+    app.init();
+    // callMe('https://sandboxapic.cisco.com/api/v0/host','GET');
+
+    var countConfig = [
+        {url: 'host', elemId: 'hostCount'}, {url: 'network-device', elemId: 'networkDeviceCount'},
+        {url: 'link', elemId: 'linkCount'}, {url: 'location', elemId: 'locationCount'},
+        {url: 'application', elemId: 'applicationCount'}, {url: 'category', elemId: 'categoryCount'},
+        {url: 'policy', elemId: 'policyCount'}];
+
+    countConfig.forEach(function (config) {
+        app.getCount(app.baseApiUrl + config.url + '/count', 'GET', 'false', config.elemId);
+    });
+
+
+    function getTopology() {
+        app.getTopology();
+    }
+
+    function clearRoutingParams() {
+        app.clearRoutingParams();
+        app.updateSourceDestination();
+    }
+
+    $("#baseUrl").text(app.baseApiUrl);
+
+
+    function callMe(url, method) {
+        app.callService(url, method, false);
+        app.createTable("table1");
+
+    }
+
+</script>
+</body>
+</html>
